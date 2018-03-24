@@ -1,3 +1,4 @@
+from sys import argv
 import feedparser
 import os
 
@@ -15,9 +16,9 @@ def get_categories():
     # Outputs a list of the categories in the subscriptions.csv file
     # Example of output: ['math.DG', 'math.AG']
     categories = []
-    with open('subscriptions.csv', 'r') as f:
+    with open(argv[1], 'r') as f:
         for cat in f:
-            categories.append(cat.strip())
+            categories.append(cat.strip().rstrip(','))
     return categories
 
 def get_id_list(cat):
