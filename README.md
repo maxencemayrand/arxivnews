@@ -4,7 +4,7 @@ Display the arXiv's daily updates on the terminal.
 
 ## Usage
 
-`$ python arxivnews.py`
+`$ python arxivnews.py subscriptions.csv`
 
 Press `enter` to go through the articles.
 
