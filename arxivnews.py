@@ -3,18 +3,24 @@ import feedparser
 import os
 
 def clearscreen():
-    # Cross-platform method to clear the screen
+    """
+    Cross-platform method to clear the terminal
+    """
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def boxed(title):
-    # Display 'title' in a box
+    """
+    Display 'title' in a box
+    """
     print('*' + '-' * (6 + len(title)) + '*')
     print("|   " + title + "   |")
     print('*' + '-' * (6 + len(title)) + '*')
 
 def get_categories():
-    # Outputs a list of the categories in the subscriptions.csv file
-    # Example of output: ['math.DG', 'math.AG']
+    """
+    Return a list of the categories in the file 'subscriptions.csv'
+    Example of output: ['math.DG', 'math.AG']
+    """
     categories = []
     with open(argv[1], 'r') as f:
         for cat in f:
@@ -22,8 +28,10 @@ def get_categories():
     return categories
 
 def get_id_list(cat):
-    # Use arxiv's rss to obtain a list of the ids of the new articles
-    # in the category 'cat'.
+    """
+    Use arxiv's rss to obtain a list of the ids of the new articles
+    in the category 'cat'.
+    """
     url = 'http://export.arxiv.org/rss/' + cat
     f = feedparser.parse(url)
     ids = []
@@ -34,8 +42,10 @@ def get_id_list(cat):
     return ids
 
 def news():
-    # Display on the terminal the new articles in each of the
-    # categories contained in the 'subscriptions.csv' file.
+    """
+    Display on the terminal the new articles in each of the
+    categories contained in the file 'subscriptions.csv'.
+    """
     categories = get_categories()
     for cat in categories:
         clearscreen()
@@ -62,6 +72,6 @@ def news():
             print("\t" + " ".join([t.term for t in p.tags]))
             print('\t' + p.id)
             print(p.summary)
-            input() # Wait for the user to type any key
+            input() # Wait for the user to press enter
 
 news()
