@@ -19,7 +19,8 @@ def boxed(title):
 def get_categories():
     """
     Return a list of the categories in the file 'subscriptions.csv'
-    Example of output: ['math.DG', 'math.AG']
+    Example of output:
+        ['math.DG', 'math.AG']
     """
     categories = []
     with open(argv[1], 'r') as f:
@@ -31,6 +32,8 @@ def get_id_list(cat):
     """
     Use arxiv's rss to obtain a list of the ids of the new articles
     in the category 'cat'.
+    Example of output:
+        ['1803.08734', '1803.08735', '1803.08750', '1803.08871']
     """
     url = 'http://export.arxiv.org/rss/' + cat
     f = feedparser.parse(url)
