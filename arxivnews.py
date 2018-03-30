@@ -52,7 +52,7 @@ def news():
     categories = get_categories()
     for cat in categories:
         clearscreen()
-        print('Loading...')
+        print('Loading ' + cat + '...')
         ids = get_id_list(cat)
         url = 'http://export.arxiv.org/api/query?id_list='
         url += ",".join(ids)
