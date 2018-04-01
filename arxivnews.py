@@ -136,12 +136,20 @@ def news(subscriptions):
     categories contained in the file `subscriptions`.
     """
     categories = get_categories(subscriptions)
-    for cat in categories:
-        for paper in cat.papers:
+    for c in categories:
+        i = 0
+        while i < len(c.papers):
             clearscreen()
-            boxed(cat.name)
-            paper.display()
-            input() # Wait for the user to press enter
-
+            boxed(c.name)
+            c.papers[i].display()
+            inp = input()
+            if inp == 'p':
+                i -= 1
+                if i < 0:
+                    i = 0
+            elif inp == 'n':
+                break
+            else:
+                i += 1
 
 news(argv[1])
