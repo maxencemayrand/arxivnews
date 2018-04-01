@@ -3,6 +3,9 @@ import feedparser
 import os
 
 class Paper:
+    """
+    Metadata of an arxiv paper.
+    """
     def __init__(self):
         self.title = None       # string
         self.authors = None     # list of strings
@@ -18,6 +21,10 @@ class Paper:
         """
         Initialize from an element `p` of `f.entries` where
         `f = feedparser.parse(url)` for some url.
+
+        Examples of url:
+            http://export.arxiv.org/rss/math.AG
+            http://export.arxiv.org/api/query?id_list=1803.10893,1803.10894&max_results=2
         """
         self.title = p.title
         self.authors = [a.name for a in p.authors]
@@ -50,6 +57,14 @@ class Paper:
         print('\t' + self.id)
         print(self.abstract)
 
+class Category:
+    """
+    All new and revised papers in a category.
+    """
+    def __init__(self, papers=None, name=None):
+        self.papers = papers    # list of `Paper` objects
+        self.name = name        # the name of the category, e.g 'math.DG'
+
 def clearscreen():
     """
     Cross-platform method to clear the terminal.
@@ -64,17 +79,17 @@ def boxed(title):
     print("|   " + title + "   |")
     print('*' + '-' * (6 + len(title)) + '*')
 
-def get_categories():
+def read_categories_names(subscriptions):
     """
-    Return a list of the categories in the file 'subscriptions.csv'
+    Return a list of the categories in the file 'subscriptions'
     Example of output:
         ['math.DG', 'math.AG']
     """
-    categories = []
-    with open(argv[1], 'r') as f:
+    categories_names = []
+    with open(subscriptions, 'r') as f:
         for cat in f:
-            categories.append(cat.strip().rstrip(','))
-    return categories
+            categories_names.append(cat.strip().rstrip(','))
+    return categories_names
 
 def get_id_list(cat):
     """
@@ -92,16 +107,15 @@ def get_id_list(cat):
         ids.append(link[i + 1:])
     return ids
 
-def news():
+def get_categories(subscriptions):
     """
-    Display on the terminal the new articles in each of the
-    categories contained in the file 'subscriptions.csv'.
+    Return a list of `Category` objects.
     """
-    categories = get_categories()
-    for cat in categories:
-        clearscreen()
-        print('Loading ' + cat + '...')
-        ids = get_id_list(cat)
+    categories_names = read_categories_names(subscriptions)
+    categories = []
+    for cat_name in categories_names:
+        print('Loading ' + cat_name)
+        ids = get_id_list(cat_name)
         url = 'http://export.arxiv.org/api/query?id_list='
         url += ",".join(ids)
         url += "&max_results={0}".format(len(ids))
@@ -112,11 +126,22 @@ def news():
             paper.init_from_feed(p)
             papers.append(paper)
         papers.sort(key=lambda p: p.published, reverse=True)
-        for paper in papers:
+        lop = Category(papers, cat_name)
+        categories.append(lop)
+    return categories
+
+def news(subscriptions):
+    """
+    Display on the terminal the new articles in each of the
+    categories contained in the file `subscriptions`.
+    """
+    categories = get_categories(subscriptions)
+    for cat in categories:
+        for paper in cat.papers:
             clearscreen()
-            boxed(cat)
+            boxed(cat.name)
             paper.display()
             input() # Wait for the user to press enter
 
 
-news()
+news(argv[1])
