@@ -2,15 +2,63 @@ from sys import argv
 import feedparser
 import os
 
+class Paper:
+    def __init__(self):
+        self.title = None       # string
+        self.authors = None     # list of strings
+        self.abstract = None    # string
+        self.published = None   # time.struct_time
+        self.updated = None     # time.struct_time
+        self.date = None        # tuple, e.g. (2018, 3, 24)
+        self.tags = None        # list of strings, e.g. ('math.DG', 'math.AG')
+        self.new = None         # boole
+        self.id = None          # string (url)
+
+    def init_from_feed(self, p):
+        """
+        Initialize from an element `p` of `f.entries` where
+        `f = feedparser.parse(url)` for some url.
+        """
+        self.title = p.title
+        self.authors = [a.name for a in p.authors]
+        self.abstract = p.summary
+        self.tags = [t.term for t in p.tags]
+        self.id = p.id
+
+        self.published = p.published_parsed
+        self.updated = p.updated_parsed
+        if self.published == self.updated:
+            self.new = True
+        else:
+            self.new = False
+
+        self.date = (self.published.tm_year, self.published.tm_mon,
+                        self.published.tm_mday)
+
+    def display(self):
+        """
+        Display the info of the paper on the terminal.
+        """
+        if self.new:
+            print("\nNEW\n")
+        else:
+            print("\nREVISED\n")
+        print(self.title)
+        print("\t" + ", ".join(self.authors))
+        print("\t%4d-%02d-%02d" % self.date)
+        print("\t" + " ".join(self.tags))
+        print('\t' + self.id)
+        print(self.abstract)
+
 def clearscreen():
     """
-    Cross-platform method to clear the terminal
+    Cross-platform method to clear the terminal.
     """
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def boxed(title):
     """
-    Display 'title' in a box
+    Display 'title' in a box.
     """
     print('*' + '-' * (6 + len(title)) + '*')
     print("|   " + title + "   |")
@@ -58,23 +106,17 @@ def news():
         url += ",".join(ids)
         url += "&max_results={0}".format(len(ids))
         f = feedparser.parse(url)
+        papers = []
         for p in f.entries:
-            # Each 'p' contains the information of an article in the
-            # category 'cat'
+            paper = Paper()
+            paper.init_from_feed(p)
+            papers.append(paper)
+        papers.sort(key=lambda p: p.published, reverse=True)
+        for paper in papers:
             clearscreen()
             boxed(cat)
-            date = p.published_parsed
-            if date == p.updated_parsed:
-                print("\nNEW\n")
-            else:
-                print("\nREVISED\n")
-            print(p.title)
-            authors = [a.name for a in p.authors]
-            print("\t" + ", ".join(authors))
-            print("\t%4d-%02d-%02d" % (date.tm_year, date.tm_mon, date.tm_mday))
-            print("\t" + " ".join([t.term for t in p.tags]))
-            print('\t' + p.id)
-            print(p.summary)
+            paper.display()
             input() # Wait for the user to press enter
+
 
 news()
