@@ -12,9 +12,9 @@ def boxed(title):
     """
     Display 'title' in a box.
     """
-    print('*' + '-' * (6 + len(title)) + '*')
-    print("|   " + title + "   |")
-    print('*' + '-' * (6 + len(title)) + '*')
+    print('*' + '-' * (6 + len(title)) + '*' + '   enter: next paper     pc: previous category')
+    print("|   " + title + "   |" + '   p: previous paper     nc: next category')
+    print('*' + '-' * (6 + len(title)) + '*' + '   q: quit')
 
 class Paper:
     """
@@ -144,6 +144,7 @@ def news(subscriptions):
             clearscreen()
             boxed(c.name)
             c.papers[j].display()
+            print()
             inp = input()
             if inp == 'p':
                 j -= 1
