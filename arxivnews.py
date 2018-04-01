@@ -2,6 +2,20 @@ from sys import argv
 import feedparser
 import os
 
+def clearscreen():
+    """
+    Cross-platform method to clear the terminal.
+    """
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def boxed(title):
+    """
+    Display 'title' in a box.
+    """
+    print('*' + '-' * (6 + len(title)) + '*')
+    print("|   " + title + "   |")
+    print('*' + '-' * (6 + len(title)) + '*')
+
 class Paper:
     """
     Metadata of an arxiv paper.
@@ -59,25 +73,11 @@ class Paper:
 
 class Category:
     """
-    All new and revised papers in a category.
+    List of `Paper` objects in the same category.
     """
     def __init__(self, papers=None, name=None):
         self.papers = papers    # list of `Paper` objects
         self.name = name        # the name of the category, e.g 'math.DG'
-
-def clearscreen():
-    """
-    Cross-platform method to clear the terminal.
-    """
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-def boxed(title):
-    """
-    Display 'title' in a box.
-    """
-    print('*' + '-' * (6 + len(title)) + '*')
-    print("|   " + title + "   |")
-    print('*' + '-' * (6 + len(title)) + '*')
 
 def read_categories_names(subscriptions):
     """
