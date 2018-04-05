@@ -12,9 +12,9 @@ def boxed(title):
     """
     Display 'title' in a box.
     """
-    print('*' + '-' * (6 + len(title)) + '*' + '   enter: next paper     pc: previous category')
-    print("|   " + title + "   |" + '   p: previous paper     nc: next category')
-    print('*' + '-' * (6 + len(title)) + '*' + '   q: quit')
+    print('*' + '-' * (4 + len(title)) + '*' + '   enter: next paper     nc: next category')
+    print("|  " + title + "  |" + '   p: previous paper     pc: previous category')
+    print('*' + '-' * (4 + len(title)) + '*' + '   q: quit')
 
 class Paper:
     """
@@ -60,16 +60,14 @@ class Paper:
         """
         Display the info of the paper on the terminal.
         """
-        if self.new:
-            print("\nNEW\n")
-        else:
-            print("\nREVISED\n")
+        print()
         print(self.title)
         print("\t" + ", ".join(self.authors))
         print("\t%4d-%02d-%02d" % self.date)
         print("\t" + " ".join(self.tags))
         print('\t' + self.id)
         print(self.abstract)
+        print()
 
 class Category:
     """
@@ -78,6 +76,7 @@ class Category:
     def __init__(self, papers=None, name=None):
         self.papers = papers    # list of `Paper` objects
         self.name = name        # the name of the category, e.g 'math.DG'
+        self.size = len(self.papers) if self.papers != None else None
 
 def read_categories_names(subscriptions):
     """
@@ -140,11 +139,16 @@ def news(subscriptions):
     while i < len(categories):
         c = categories[i]
         j = 0
-        while j < len(c.papers):
+        while j < c.size:
             clearscreen()
-            boxed(c.name)
+            title = c.name
+            title += "  {:2d}/{:2d}".format(j + 1, c.size)
+            if c.papers[j].new:
+                title += "    NEW  "
+            else:
+                title += "  REVISED"
+            boxed(title)
             c.papers[j].display()
-            print()
             inp = input()
             if inp == 'p':
                 j -= 1
