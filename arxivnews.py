@@ -174,3 +174,4 @@ def news(subscriptions):
             i += 1
 
 news(argv[1])
+clearscreen()
