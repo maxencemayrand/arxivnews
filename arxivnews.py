@@ -30,6 +30,7 @@ class Paper:
         self.tags = None        # list of strings, e.g. ('math.DG', 'math.AG')
         self.new = None         # boole
         self.id = None          # string (url)
+        self.flags = []         # list of strings
 
     def init_from_feed(self, p):
         """
@@ -56,10 +57,26 @@ class Paper:
         self.date = (self.published.tm_year, self.published.tm_mon,
                         self.published.tm_mday)
 
+        flags = [
+                'hyperkahler',
+                'hyperkähler',
+                'hyper-kahler',
+                'hyper-kähler',
+                'hyperkaehler',
+                'hyper-kaehler'
+                ]
+        for f in flags:
+            if f.lower() in (self.title + self.abstract +
+                                ''.join(self.authors)).lower():
+                self.flags.append(f)
+
     def display(self):
         """
         Display the info of the paper on the terminal.
         """
+        print()
+        for f in self.flags:
+            print("   * " + f)
         print()
         print(self.title)
         print("\t" + ", ".join(self.authors))
