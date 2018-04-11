@@ -196,5 +196,6 @@ def news(subscriptions, flags):
         else:
             i += 1
 
-news(argv[1], argv[2])
-clearscreen()
+if __name__ == '__main__':
+    news(argv[1], argv[2])
+    clearscreen()
