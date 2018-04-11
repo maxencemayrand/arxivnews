@@ -32,7 +32,7 @@ class Paper:
         self.id = None          # string (url)
         self.flags = []         # list of strings
 
-    def init_from_feed(self, p):
+    def init_from_feed(self, p, flags_list):
         """
         Initialize from an element `p` of `f.entries` where
         `f = feedparser.parse(url)` for some url.
@@ -57,19 +57,7 @@ class Paper:
         self.date = (self.published.tm_year, self.published.tm_mon,
                         self.published.tm_mday)
 
-        flags = [
-                'hyperkahler',
-                'hyperkähler',
-                'hyper-kahler',
-                'hyper-kähler',
-                'hyperkaehler',
-                'hyper-kaehler',
-                'hyperk{\\"a}hler',
-                'hyper-k{\\"a}hler'
-                'hyperk\\"ahler',
-                'hyper-k\\"ahler',
-                ]
-        for f in flags:
+        for f in flags_list:
             if f.lower() in (self.title + self.abstract +
                                 ''.join(self.authors)).lower():
                 self.flags.append(f)
@@ -102,15 +90,27 @@ class Category:
 
 def read_categories_names(subscriptions):
     """
-    Return a list of the categories in the file 'subscriptions'
+    Return a list of the categories in the file `subscriptions`.
     Example of output:
         ['math.DG', 'math.AG']
     """
     categories_names = []
     with open(subscriptions, 'r') as f:
         for cat in f:
-            categories_names.append(cat.strip().rstrip(','))
+            categories_names.append(cat.strip())
     return categories_names
+
+def read_flags(flags):
+    """
+    Return a list of the flags in the file `flags`.
+    Example of output:
+        ['hyperkahler', 'stratification']
+    """
+    flags_list = []
+    with open(flags, 'r') as f:
+        for cat in f:
+            flags_list.append(cat.strip())
+    return flags_list
 
 def get_id_list(cat):
     """
@@ -128,11 +128,12 @@ def get_id_list(cat):
         ids.append(link[i + 1:])
     return ids
 
-def get_categories(subscriptions):
+def get_categories(subscriptions, flags):
     """
     Return a list of `Category` objects.
     """
     categories_names = read_categories_names(subscriptions)
+    flags_list = read_flags(flags)
     categories = []
     for cat_name in categories_names:
         print('Loading ' + cat_name)
@@ -144,19 +145,19 @@ def get_categories(subscriptions):
         papers = []
         for p in f.entries:
             paper = Paper()
-            paper.init_from_feed(p)
+            paper.init_from_feed(p, flags_list)
             papers.append(paper)
         papers.sort(key=lambda p: p.published, reverse=True)
         lop = Category(papers, cat_name)
         categories.append(lop)
     return categories
 
-def news(subscriptions):
+def news(subscriptions, flags):
     """
     Display on the terminal the new articles in each of the
     categories contained in the file `subscriptions`.
     """
-    categories = get_categories(subscriptions)
+    categories = get_categories(subscriptions, flags)
     i = 0
     while i < len(categories):
         c = categories[i]
@@ -195,5 +196,5 @@ def news(subscriptions):
         else:
             i += 1
 
-news(argv[1])
+news(argv[1], argv[2])
 clearscreen()

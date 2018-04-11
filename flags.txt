@@ -4,3 +4,9 @@ hyper-kahler
 hyper-kähler
 hyperkaehler
 hyper-kaehler
+hyperk{\"a}hler
+hyper-k{\"a}hler
+hyperk\"ahler
+hyper-k\"ahler
+stratification
+stratified
