@@ -63,7 +63,11 @@ class Paper:
                 'hyper-kahler',
                 'hyper-kähler',
                 'hyperkaehler',
-                'hyper-kaehler'
+                'hyper-kaehler',
+                'hyperk{\\"a}hler',
+                'hyper-k{\\"a}hler'
+                'hyperk\\"ahler',
+                'hyper-k\\"ahler',
                 ]
         for f in flags:
             if f.lower() in (self.title + self.abstract +
@@ -75,9 +79,10 @@ class Paper:
         Display the info of the paper on the terminal.
         """
         print()
-        for f in self.flags:
-            print("   * " + f)
-        print()
+        if len(self.flags) > 0:
+            for f in self.flags:
+                print("   * " + f)
+            print()
         print(self.title)
         print("\t" + ", ".join(self.authors))
         print("\t%4d-%02d-%02d" % self.date)
