@@ -6,6 +6,6 @@ Write the categories you wish to subscribe in the file `subscriptions.txt`. Also
 
 ## Usage
 
-`$ python arxivnews.py subscriptions.txt flag.txt`
+`$ python arxivnews.py subscriptions.txt flags.txt`
 
 Press `enter` to go through the articles.
