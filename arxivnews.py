@@ -73,7 +73,11 @@ class Paper:
             print()
         print(self.title)
         print("\t" + ", ".join(self.authors))
-        print("\t%4d-%02d-%02d" % self.date)
+        print("\t%4d-%02d-%02d" % self.date, end=' ')
+        if self.new:
+            print("NEW")
+        else:
+            print("REVISED")
         print("\t" + " ".join(self.tags))
         print('\t' + self.id)
         print(self.abstract)
@@ -124,8 +128,7 @@ def get_id_list(cat):
     ids = []
     for p in f.entries:
         link = p.link
-        i = link.rfind('/')
-        ids.append(link[i + 1:])
+        ids.append(link[21:])
     return ids
 
 def get_categories(subscriptions, flags):
@@ -136,17 +139,19 @@ def get_categories(subscriptions, flags):
     flags_list = read_flags(flags)
     categories = []
     for cat_name in categories_names:
-        print('Loading ' + cat_name)
+        print('Loading ' + cat_name + ':', end=' ')
         ids = get_id_list(cat_name)
+        print("%d papers." % len(ids))
         url = 'http://export.arxiv.org/api/query?id_list='
         url += ",".join(ids)
         url += "&max_results={0}".format(len(ids))
         f = feedparser.parse(url)
         papers = []
         for p in f.entries:
-            paper = Paper()
-            paper.init_from_feed(p, flags_list)
-            papers.append(paper)
+            if p.title != "Error":
+                paper = Paper()
+                paper.init_from_feed(p, flags_list)
+                papers.append(paper)
         papers.sort(key=lambda p: p.published, reverse=True)
         lop = Category(papers, cat_name)
         categories.append(lop)
@@ -158,6 +163,7 @@ def news(subscriptions, flags):
     categories contained in the file `subscriptions`.
     """
     categories = get_categories(subscriptions, flags)
+    input("\nPress enter to continue. ")
     i = 0
     while i < len(categories):
         c = categories[i]
@@ -166,10 +172,6 @@ def news(subscriptions, flags):
             clearscreen()
             title = c.name
             title += "  {:2d}/{:2d}".format(j + 1, c.size)
-            if c.papers[j].new:
-                title += "    NEW  "
-            else:
-                title += "  REVISED"
             boxed(title)
             c.papers[j].display()
             inp = input()
